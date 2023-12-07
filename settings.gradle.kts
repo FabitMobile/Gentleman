@@ -15,4 +15,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "Gentleman"
 include(":core")
-include(":sample")
+//include(":sample")

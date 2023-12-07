@@ -37,5 +37,3 @@ dependencies {
     implementation(libs.core.ktx)
     implementation(libs.appcompat)
 }
-
-apply(from = "../android_publish.gradle")

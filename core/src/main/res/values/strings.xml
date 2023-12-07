@@ -1,0 +1,5 @@
+<resources>
+    <string name="gentleman_permissions_info">Нам нужно разрешение для корректонй работы приложения</string>
+    <string name="gentleman_positive_button">Разрешить</string>
+    <string name="gentleman_negative_button">Нет, в другой раз</string>
+</resources>

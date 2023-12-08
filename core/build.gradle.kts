@@ -38,3 +38,5 @@ dependencies {
     implementation(libs.appcompat)
     implementation(libs.material)
 }
+
+apply(from = "../android_publish.gradle")

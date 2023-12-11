@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import ru.fabit.gentleman.internal.Dummy
@@ -15,7 +16,7 @@ import ru.fabit.gentleman.internal.log
 
 class Gentleman internal constructor() {
     companion object {
-        var DEBUG = true
+        var DEBUG = false
 
         internal const val RESULT_CODE = 0x9e471e
         internal const val PERMISSION_KEY = "PERMISSION_KEY"
@@ -47,8 +48,12 @@ class Gentleman internal constructor() {
                     AwaitResult(granted = params.permissions)
                 )
             } else {
-                log("Starting Dummy")
-                context.startActivity(Intent(context, Dummy::class.java))
+                context.startActivity(
+                    Intent(
+                        context,
+                        Dummy::class.java
+                    ).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                )
             }
         }
 
@@ -99,7 +104,12 @@ class Gentleman internal constructor() {
 
     private fun sendResult(context: Context, retry: Boolean, result: AwaitResult) {
         val appearance = appearanceClass
-        if (retry && result.denied.isNotEmpty() && appearance != null) {
+        if (retry
+            && result.denied.isNotEmpty()
+            && appearance != null
+            && context is AppCompatActivity
+            && context.isAnyRationale(permissions)
+        ) {
             log("Permissions denied, performing retry")
             this.retry = none
             val set = GentlemanSet()
@@ -112,6 +122,8 @@ class Gentleman internal constructor() {
             callback?.invoke(result)
             instance = null
         }
+        if (context is Dummy)
+            context.finish()
     }
 
     private fun ComponentActivity.registerForRequest(): Register {

@@ -1,5 +1,6 @@
 package ru.fabit.sample
 
+import android.Manifest
 import android.os.Bundle
 import android.widget.Button
 import android.widget.Toast
@@ -22,8 +23,8 @@ class MainActivity : AppCompatActivity() {
             Gentleman in Tuxedo {
                 with(context)
                 ask(
-                    android.Manifest.permission.ACCESS_COARSE_LOCATION,
-                    android.Manifest.permission.POST_NOTIFICATIONS
+                    Manifest.permission.ACCESS_COARSE_LOCATION,
+                    Manifest.permission.POST_NOTIFICATIONS
                 ) retry once
                 await { result ->
                     showMessage("granted=${result.granted}")

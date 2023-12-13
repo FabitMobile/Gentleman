@@ -12,6 +12,7 @@ _Этот джентльмен был известен своей изыскан
 * Запрос одного или нескольких разрешений
 * Получение результата в виде коллбэка
 * Полная кастомизация интерфейса
+* Различные стратегии использования
 
 ![Sample](https://github.com/FabitMobile/Gentleman/raw/main/sample/sample.gif)
 
@@ -35,7 +36,7 @@ module build.gradle.kts
 implementation("com.github.FabitMobile.library-appupdate:core:$latestVersion")
 ```
 
-В Activity/Fragment/View описываем необходимые разрешения и обработчик результата
+В удобном месте описываем необходимые разрешения и обработчик результата. Context подойдет любой
 
 ```kotlin
 Gentleman in Tuxedo {
@@ -49,31 +50,60 @@ Gentleman in Tuxedo {
 
 Для запроса нескольких разрешений сразу, указываем их через запятую или в виде списка
 
-Есть возможность перезапросить разрешение, если в первый раз получили отказ
+Не забываем, что после Adnroid 11 разрешения не запрашиваются, если были отклонены дважды
+
+## Стратегии запросов
+
+### Перезапрос при отклонении
 
 ```kotlin
-ask(
-    Manifest.permission.ACCESS_COARSE_LOCATION,
-    Manifest.permission.POST_NOTIFICATIONS
-) retry once
+ask(Manifest.permission.ACCESS_COARSE_LOCATION) retry once
 ```
 
-Не забываем, что после Adnroid 11 разрешения не запрашиваются, если были отклонены дважды
+### Показ Rationale
+
+- Всегда показывать перед запросом
+
+```kotlin
+gentle manner ask(Manifest.permission.ACCESS_COARSE_LOCATION)
+```
+
+- Показывать при необходимости (поведение по-умолчанию)
+
+```kotlin
+usual manner ask(Manifest.permission.ACCESS_COARSE_LOCATION)
+```
+
+- Никогда не показывать
+
+```kotlin
+rude manner ask(Manifest.permission.ACCESS_COARSE_LOCATION)
+```
+
+### Невозможность запросить разрешение
+
+- Открывает дополнительную разметку, предлагающую перейти в настройки
+
+```kotlin
+suggest goTo innerChamber
+```
 
 ## Внешний вид
 
-Для кастомизации Rationale интерфейса необходимо переопределить класс `GentlemanAppearance` соблюдая
-аргументы
+Для кастомизации интерфейса необходимо переопределить класс `GentlemanAppearance` -
+подготовительный этап, который далее передается в `Appearance`
 
 ```kotlin
 class Tuxedo(
-    override val layoutResId: Int = R.layout.tuxedo,
-    reparation: Preparation? = null
+    override val rationaleLayoutResId: Int = R.layout.tuxedo,
+    override val settingLayoutResId: Int = R.layout.inner_chamber,
+    override val appearanceClass: Class<out Appearance> = Appearance::class.java,
+    reparation: Preparation,
 ) : GentlemanAppearance(reparation)
 ```
 
-Это полноценная activity в которой вы вольны делать что угодно. Необходимо только использовать
-специальные id для view (**button_positive** и **button_negative**) для обработки нажатий
-соответствующих кнопок
+`Appearance` - это полноценная activity в которой вы вольны делать что угодно. Необходимо только
+использовать специальные id (**button_positive** и **button_negative**) для view для обработки
+нажатий соответствующих кнопок
 
 Иногда достаточно будет переопределить только саму разметку `R.layout.tuxedo`

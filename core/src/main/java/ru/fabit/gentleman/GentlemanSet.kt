@@ -13,6 +13,10 @@ class GentlemanSet {
         private set
     var retry: Retry = none
         private set
+    var manner: Manner = usual
+        private set
+    var openSettings: Boolean = false
+        private set
 
     infix fun with(context: Context) {
         this.context = context
@@ -32,13 +36,35 @@ class GentlemanSet {
         this.callback = callback
     }
 
+    infix fun manner(mode: Manner) {
+        manner = mode
+    }
+
+    infix fun Manner.manner(ask: Ask): Ask {
+        return ask.manner(this)
+    }
+
     override fun toString(): String {
         return "GentlemanSet(target=$permissions)"
     }
 
     inner class Ask {
-        infix fun retry(mode: Retry) {
+        infix fun retry(mode: Retry): Ask {
             retry = mode
+            return this
+        }
+
+        infix fun manner(mode: Manner): Ask {
+            manner = mode
+            return this
         }
     }
+
+    inner class Suggest {
+        infix fun goTo(goTo: GoTo) {
+            openSettings = goTo == innerChamber
+        }
+    }
+
+    val suggest = Suggest()
 }

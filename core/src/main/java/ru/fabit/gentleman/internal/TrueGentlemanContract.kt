@@ -3,23 +3,27 @@ package ru.fabit.gentleman.internal
 import android.content.Context
 import android.content.Intent
 import androidx.activity.result.contract.ActivityResultContract
-import ru.fabit.gentleman.Gentleman.Companion.PERMISSION_KEY
-import ru.fabit.gentleman.Gentleman.Companion.PERMISSION_RESULT
-import ru.fabit.gentleman.Gentleman.Companion.RESULT_CODE
+import ru.fabit.gentleman.Gentleman
 
-internal class TrueGentlemanContract(
-    private val appearanceClass: Class<*>
-) : ActivityResultContract<Array<String>, RationalResult>() {
+abstract class TrueGentlemanContract<Input>(
+    private val appearanceClass: Class<*>,
+    private val layoutResId: Int
+) : ActivityResultContract<Input, ContractResult>() {
 
-    override fun createIntent(context: Context, input: Array<String>): Intent {
-        return Intent(context, appearanceClass).putExtra(PERMISSION_KEY, input)
+    abstract fun Intent.putExtra(input: Input)
+
+    override fun createIntent(context: Context, input: Input): Intent {
+        return Intent(context, appearanceClass).apply {
+            putExtra(input)
+            putExtra(Gentleman.LAYOUT_RES_ID, layoutResId)
+        }
     }
 
-    override fun parseResult(resultCode: Int, intent: Intent?): RationalResult {
-        if (resultCode != RESULT_CODE || intent == null)
-            return RationalResult.DENIED
+    override fun parseResult(resultCode: Int, intent: Intent?): ContractResult {
+        if (resultCode != Gentleman.RESULT_CODE || intent == null)
+            return ContractResult.NEGATIVE
         val result =
-            intent.getStringExtra(PERMISSION_RESULT) ?: RationalResult.DENIED.name
-        return RationalResult.valueOf(result)
+            intent.getStringExtra(Gentleman.PERMISSIONS_RESULT) ?: ContractResult.NEGATIVE.name
+        return ContractResult.valueOf(result)
     }
 }

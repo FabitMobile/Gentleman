@@ -1,31 +1,28 @@
 package ru.fabit.sample
 
-import android.Manifest
+import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.os.Bundle
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import ru.fabit.gentleman.Gentleman
 import ru.fabit.gentleman.appearance.Tuxedo
+import ru.fabit.gentleman.gentle
+import ru.fabit.gentleman.innerChamber
 import ru.fabit.gentleman.once
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-    }
 
-    override fun onResume() {
-        super.onResume()
-        val context = this
+        val context = applicationContext
         val button = findViewById<Button>(R.id.button)
         button.setOnClickListener {
             Gentleman in Tuxedo {
                 with(context)
-                ask(
-                    Manifest.permission.ACCESS_COARSE_LOCATION,
-                    Manifest.permission.POST_NOTIFICATIONS
-                ) retry once
+                gentle manner ask(ACCESS_COARSE_LOCATION) retry once
+                suggest goTo innerChamber
                 await { result ->
                     showMessage("granted=${result.granted}")
                     showMessage("denied=${result.denied}")

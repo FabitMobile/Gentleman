@@ -33,7 +33,7 @@ repositories {
 module build.gradle.kts
 
 ```kotlin
-implementation("com.github.FabitMobile.library-appupdate:core:$latestVersion")
+implementation("com.github.FabitMobile.gentleman:$latestVersion")
 ```
 
 В удобном месте описываем необходимые разрешения и обработчик результата. Context подойдет любой
